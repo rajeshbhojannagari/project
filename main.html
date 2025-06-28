@@ -6,16 +6,54 @@
     <title>Document</title>
      <link href="./output.css" rel="stylesheet">
 </head>
-<body class="bg-green-500">
+<body class="">
     <h1 class="text-5xl text-center py-6">Hello Let's Start with our Remainder process</h1>
-    <div class="text-center justify-center">
-    <input type="text" id="medicineInput" placeholder="enter medicine name" class="bg-white">
-    <br>
-    <button  onclick="generateCheckBox()" class="bg-blue-400">Create a Medicine List</button>
-    </div>
+    <input type="text" id="MedicineInput" placeholder="Enter Medicine Name" class="border rounded mb-2"><br>
+    <button onclick="AddMedicine()" class=" border rounded bg-amber-200">Add Medicine</button><br>
+    <form id="medicineForm" class="checkbox-group"></form><br>
+    <label for="reminderTime"><strong>Set Reminder Time:</strong></label>
+    <input type="time" id="reminderTime"><br>
+    <button onclick="SubmitMedicine()" class="border rounded bg-blue-500">Submit </button>
     <script>
-        function generateCheckBox(){
+        let medicines=[];
+        function AddMedicine(){
+            const input=document.getElementById('MedicineInput');
+            const value=input.value.trim();
+            if(value!==''){
+                medicines.push(value);
+                input.value='';
+                renderMedicine();
+            }
+        }
+        function renderMedicine(){
+            const form=document.getElementById("medicineForm");
+            form.innerHTML=' ';
             
+        }
+        function SubmitMedicine(){
+            alert("All medicines have been taken");
+            const timeInput=document.getElementById("reminderTime").value;
+            if(timeInput){
+                const[hour,minute]=timeInput.split(":").map(Number);
+                const now=new Date();
+                const selected=new Date(now.getFullYear(),now.getMonth(),now.getDate(),hour,minute);
+                const BeforeRemainder=new Date(selected.getTime()-10*60000);
+                const AfterRemainder=new Date(selected.getTime()+10*60000);
+                scheduleReminder(BeforeReminder, "Reminder: 10 minutes before medicine time!");
+                scheduleReminder(AfterReminder, "Reminder: 10 minutes after medicine time!");
+            }
+            medicines=[];
+            renderMedicine();
+            document.getElementById("reminderTime").value=" ";
+        }
+        function scheduleReminder(reminderTime,message){
+            const now=new Date();
+            const diff=reminderTime-now;
+            if(diff>0){
+                setTimeout(() => {
+                    alert(message);
+                }, diff);
+            }
         }
     </script>
 </body>
