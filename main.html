@@ -6,14 +6,14 @@
     <title>Document</title>
      <link href="./output.css" rel="stylesheet">
 </head>
-<body class="">
+<body>
     <h1 class="text-5xl text-center py-6">Hello Let's Start with our Remainder process</h1>
     <input type="text" id="MedicineInput" placeholder="Enter Medicine Name" class="border rounded mb-2"><br>
     <button onclick="AddMedicine()" class=" border rounded bg-amber-200">Add Medicine</button><br>
     <form id="medicineForm" class="checkbox-group"></form><br>
     <label for="reminderTime"><strong>Set Reminder Time:</strong></label>
-    <input type="time" id="reminderTime"><br>
-    <button onclick="SubmitMedicine()" class="border rounded bg-blue-500">Submit </button>
+    <input type="time" id="reminderTime" class="border rounded p-2"><br>
+    <button id="submitBtn" onclick="SubmitMedicine()" class="border rounded bg-blue-500" disabled>Submit </button>
     <script>
         let medicines=[];
         function AddMedicine(){
@@ -27,25 +27,47 @@
         }
         function renderMedicine(){
             const form=document.getElementById("medicineForm");
-            form.innerHTML=' ';
-            
+            form.innerHTML='';
+            medicines.forEach((med,index)=>{
+                const div=document.createElement('div');
+                div.classList.add('checkbox-item');
+                const checkbox=document.createElement('input');
+                checkbox.type='checkbox';
+                checkbox.id=`med-${index}`;
+                checkbox.onchange=checkIfAllChecked;
+                const label=document.createElement('label');
+                label.htmlFor=`med-${index}`;
+                label.textContent=med;
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                form.appendChild(div);
+            });
+            checkIfAllChecked();
         }
-        function SubmitMedicine(){
-            alert("All medicines have been taken");
-            const timeInput=document.getElementById("reminderTime").value;
-            if(timeInput){
-                const[hour,minute]=timeInput.split(":").map(Number);
-                const now=new Date();
-                const selected=new Date(now.getFullYear(),now.getMonth(),now.getDate(),hour,minute);
-                const BeforeRemainder=new Date(selected.getTime()-10*60000);
-                const AfterRemainder=new Date(selected.getTime()+10*60000);
-                scheduleReminder(BeforeReminder, "Reminder: 10 minutes before medicine time!");
-                scheduleReminder(AfterReminder, "Reminder: 10 minutes after medicine time!");
-            }
-            medicines=[];
-            renderMedicine();
-            document.getElementById("reminderTime").value=" ";
+        function checkIfAllChecked(){
+            const allChecked=medicines.length>0 && medicines.every((_,i)=>document.getElementById(`med-${i}`).checked);
+            document.getElementById('submitBtn').disabled=!allChecked;
         }
+       function SubmitMedicine() {
+                    alert("All medicines have been taken");
+                    const timeInput = document.getElementById("reminderTime").value;
+                    if (timeInput) {
+                        const [hour, minute] = timeInput.split(":").map(Number);
+                        const now = new Date();
+                        const selected = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
+                        const beforeReminder = new Date(selected.getTime() - 10 * 60000);
+                        const afterReminder = new Date(selected.getTime() + 10 * 60000);
+                        console.log("Now:", now);
+                        console.log("Selected Time:", selected);
+                        console.log("Before Reminder:", beforeReminder);
+                        console.log("After Reminder:", afterReminder);
+                        scheduleReminder(beforeReminder, "Reminder: 10 minutes before medicine time!");
+                        scheduleReminder(afterReminder, "Reminder: 10 minutes after medicine time!");
+                    }
+                    medicines = [];
+                    renderMedicine();
+                    document.getElementById("reminderTime").value = "";
+                }
         function scheduleReminder(reminderTime,message){
             const now=new Date();
             const diff=reminderTime-now;
