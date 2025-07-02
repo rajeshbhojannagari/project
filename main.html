@@ -48,38 +48,42 @@
             const allChecked=medicines.length>0 && medicines.every((_,i)=>document.getElementById(`med-${i}`).checked);
             document.getElementById('submitBtn').disabled=!allChecked;
         }
-       function SubmitMedicine() {
-                    alert("All medicines have been taken");
-                    const timeInput = document.getElementById("reminderTime").value;
-                    if (timeInput) {
-                        const [hour, minute] = timeInput.split(":").map(Number);
-                        const now = new Date();
-                        const selected = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
-                        const beforeReminder = new Date(selected.getTime() - 10 * 60000);
-                        const afterReminder = new Date(selected.getTime() + 10 * 60000);
-                        console.log("Now:", now);
-                        console.log("Selected Time:", selected);
-                        console.log("Before Reminder:", beforeReminder);
-                        console.log("After Reminder:", afterReminder);
-                        scheduleReminder(beforeReminder, "Reminder: 10 minutes before medicine time!");
-                        scheduleReminder(afterReminder, "Reminder: 10 minutes after medicine time!");
-                    }
-                    medicines = [];
-                    renderMedicine();
-                    document.getElementById("reminderTime").value = "";
-                }
-       function scheduleReminder(reminderTime, message) {
-                            const now=new Date();
-                            const diff=reminderTime-now;
-                            if (diff>0){
-                                console.log(`Scheduling alert in ${Math.round(diff / 1000)} seconds: ${message}`);
-                                setTimeout(()=>{
-                                    alert(message);
-                                },diff);
-                            } else {
-                                console.log("Reminder time is already passed, skipping.");
-                            }
-                        }
+        function SubmitMedicine(){
+        alert("All medicines have been taken");
+        const timeInput=document.getElementById("reminderTime").value;
+        if (timeInput){
+            const [hour, minute]=timeInput.split(":").map(Number);
+            const now=new Date();
+            const selected=new Date(now.getFullYear(),now.getMonth(),now.getDate(),hour,minute);
+            if (selected<=now) {
+                alert("Please select a future time for the reminder.");
+                return;
+            }
+            const beforeReminder = new Date(selected.getTime() - 10 * 60000);
+            const afterReminder = new Date(selected.getTime() + 10 * 60000);
+            console.log("Now:",now);
+            console.log("Selected:",selected);
+            console.log("Before Reminder:",beforeReminder);
+            console.log("After Reminder:",afterReminder);
+            scheduleReminder(beforeReminder, "Reminder: 10 minutes before medicine time!");
+            scheduleReminder(afterReminder, "Reminder: 10 minutes after medicine time!");
+        }
+        medicines = [];
+        renderMedicine();
+        document.getElementById("reminderTime").value = "";
+    }
+    function scheduleReminder(reminderTime, message) {
+        const now=new Date();
+        const diff=reminderTime - now;
+        if (diff > 0){
+            console.log(`Scheduling: ${message} in ${Math.round(diff / 1000)} seconds`);
+            setTimeout(()=>{
+                alert(message);
+            },diff);
+        }else{
+            console.log("Reminder time already passed. Skipping.");
+        }
+    }
     </script>
 </body>
 </html>
