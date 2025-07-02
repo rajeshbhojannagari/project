@@ -68,15 +68,19 @@
                     renderMedicine();
                     document.getElementById("reminderTime").value = "";
                 }
-        function scheduleReminder(reminderTime,message){
-            const now=new Date();
-            const diff=reminderTime-now;
-            if(diff>0){
-                setTimeout(() => {
-                    alert(message);
-                }, diff);
-            }
-        }
+       function scheduleReminder(reminderTime, message) {
+                            const now=new Date();
+                            const diff=reminderTime-now;
+                            if (diff>0){
+                                console.log(`Scheduling alert in ${Math.round(diff / 1000)} seconds: ${message}`);
+                                setTimeout(()=>{
+                                    alert(message);
+                                },diff);
+                            } else {
+                                console.log("Reminder time is already passed, skipping.");
+                            }
+                        }
+
     </script>
 </body>
 </html>
